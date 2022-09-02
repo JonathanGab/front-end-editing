@@ -1,0 +1,62 @@
+.container {
+  display: flex;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+}
+.container-close {
+  display: flex;
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  visibility: hidden;
+}
+.box {
+  background-color: rgba(54, 54, 54, 0.351);
+  height: 100%;
+  width: 100%;
+}
+.drawer {
+  position: absolute;
+  padding: 0;
+  width: 0;
+  right: 0;
+  height: 100vh;
+  background-color: #fff;
+  transition: width 0.5s ease-out;
+}
+.drawer > div {
+  padding: 10px;
+}
+.drawer.close {
+  width: 0%;
+}
+.drawer.close * {
+  visibility: hidden;
+  transition: visibility 0.3s;
+}
+.drawer.open {
+  box-shadow: rgb(149 157 165 / 20%) 0px 8px 24px;
+  width: 70%;
+  border-left: 1px solid rgb(238, 238, 238);
+  padding: 0px 30px 0 20px;
+}
+.drawer.open * {
+  visibility: visible;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.drawer-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 0 20px;
+}

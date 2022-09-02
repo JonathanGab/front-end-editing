@@ -1,0 +1,16 @@
+.select-input-json {
+  padding: 1rem;
+  border: 1px solid rgb(190, 190, 190);
+  border-radius: 10px;
+}
+
+.select-input-container {
+  display: flex;
+  flex-direction: column;
+}
+.select-input-box {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  margin: 1rem 0;
+}
