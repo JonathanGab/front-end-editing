@@ -5,11 +5,12 @@ import { iterate } from 'dixea-json-parser';
 
 export const useParsedData = ({ enabled, drawerURI, mapResponseFn }) => {
   const [parsedData, setParsedData] = useState();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(enabled);
   const { id } = useContext(DrawerContext);
 
   useEffect(() => {
     if (enabled) {
+      setLoading(true)
       axios
         .get(`${drawerURI}${id}`)
         .then(
@@ -26,7 +27,10 @@ export const useParsedData = ({ enabled, drawerURI, mapResponseFn }) => {
           iterate(drawerData, '', 'racine', parsedData, setParsedData);
           setLoading(false);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err)
+          console.log(err)
+        });
     }
   }, [enabled, id, mapResponseFn, drawerURI, parsedData]);
 
