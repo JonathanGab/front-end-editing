@@ -1,5 +1,12 @@
 module.exports = {
+  style: {
+    drawer_width: '30%',
+  },
   wordpress_module: {
+    //. entrez l'ancetre et la key de votre objet
+    url_website_back: 'http://localhost/module/wp-json/wp/v2/',
+    // afin de pouvoir afficher les champs correspondants lors du filtre
+    url_token_module: 'http://localhost/module/wp-json/jwt-auth/v1/token',
     filter: [
       'racine',
       'id',
@@ -9,27 +16,59 @@ module.exports = {
       'acf',
       'pieces',
       'superficie',
+      'better_featured_image',
+      'source_url',
     ],
+    // precisez le nom de votre cms
     cms: 'wordpress',
     // utilisez vous un module pour generer des customs fields ?
     // si oui precisez le nom du module ci dessous le nom utilisé dans l'api
-    // nous recommandons l'utilisation du module Advanced Custom Fields (ACF)
+    // nous recommandons l'utilisation du module Advanced Custom Fields (ACF) saissisez le
+    // de la même manière que dans l'api afin d'avoir la bonne sortie
     custom_fields: 'acf',
+    draft: 'publish',
   },
   drupal_module: {
+    url_website_back: 'http://localhost/drupalSite/jsonapi/node/',
     //. entrez l'ancetre et la key de votre objet
-    //. afin de pouvoir afficher les champs correspondants
+    // afin de pouvoir afficher les champs correspondants
     filter: [
       'id',
-      'racine',
+      'data',
       'attributes',
       'title',
       'status',
       'body',
       'value',
+      'included',
+      'url',
+      'field_image',
       'field_background',
     ],
-    //. precisez le nom de votre cms
+    exclude_id_array: [
+      'langcode',
+      'type',
+      'id',
+      'content_translation_source',
+      'summary',
+      'revision_timestamp',
+      'created',
+      'changed',
+      'format',
+      'processed',
+      'filename',
+      'filemime',
+      'data',
+    ],
+    exclude_number_input: ['body', 'attributes'],
+    exclude_boolean_input: ['uri'],
+    include_image_field: ['field_image', 'field_background'],
+    // precisez le nom de votre cms
     cms: 'drupal',
+    draft: false,
+    style: {
+      drawer_width: '50%',
+    },
+    media_url: 'http://localhost/drupalSite/jsonapi/file/file',
   },
 };

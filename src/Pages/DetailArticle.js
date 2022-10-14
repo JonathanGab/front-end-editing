@@ -1,51 +1,37 @@
-import React, { useEffect, useState, useContext } from 'react';
-import './DetailArticle.css';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import Form from '../components/Form/Form';
-import { Drawer } from 'dixea-drawer';
-import ButtonEdit from '../components/Button/ButtonEdit';
+// import React, { useContext, useState } from 'react';
+// import './DetailArticle.css';
 
-import { JsonParserContext } from '../Contexts/JsonParserContext';
-import { DrawerContext } from '../Contexts/DrawerContext';
+// import { Drawer, DrupalForm, Button } from 'jonathan-formulaire';
 
-export default function DetailArticle() {
-  const { id } = useParams();
-  const { removeHtmlTags, iterate } = useContext(JsonParserContext);
-  const { handleOpen, getData, setGetData, open, setId } =
-    useContext(DrawerContext);
+// import { drupal_module } from '../config';
+// import { JsonParserContext } from '../Contexts/JsonParserContext';
+// import { DrawerContext } from '../Contexts/DrawerContext';
 
-  useEffect(() => {
-    axios
-      .get(`http://localhost/module/wp-json/wp/v2/maison/${id}`)
-      .then((res) => setGetData(res.data))
-      .catch((err) => console.error(err));
-  }, []);
+// export default function DetailArticle() {
+//   const [filteredValue, setFilteredValue] = useState([]);
+//   const [edit, setEdit] = useState({});
+//   const { removeHtmlTags } = useContext(JsonParserContext);
+//   const { handleOpen, getData, setGetData, open, setId, id } =
+//     useContext(DrawerContext);
 
-  return (
-    <div className="detail-article">
-      <div className="btn-container">
-        <ButtonEdit
-          onClick={() => {
-            handleOpen();
-            setId(`maison/${getData.id}`);
+//   return (
+//     <div className="detail-article">
+//       <div className="btn-container">
+//         <Button
+//           onClick={() => {
+//             handleOpen();
+//             setId(`${getData.id}`);
+//           }}
+//         />
+//       </div>
+//       {/* <h1>{getData?.title?.rendered}</h1> */}
+//       <h1>{getData?.attributes?.title}</h1>
+//       <div>
+//         <p>{removeHtmlTags(getData?.content?.rendered)}</p>
+//       </div>
+//       {getData && (
 
-            iterate(getData, '', 'racine');
-          }}
-        />
-      </div>
-      <h1>{getData?.title?.rendered}</h1>
-      <div>
-        <p>{removeHtmlTags(getData?.content?.rendered)}</p>
-      </div>
-      {getData && (
-        <Drawer
-          open={open}
-          onClick={handleOpen}
-          formOne={<Form />}
-          formTwo={<Form />}
-        />
-      )}
-    </div>
-  );
-}
+//       )}
+//     </div>
+//   );
+// }

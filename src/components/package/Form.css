@@ -1,0 +1,38 @@
+.form-cms {
+  width: 100%;
+}
+.btn-send {
+  background-color: transparent;
+  color: #000;
+  cursor: pointer;
+  border: 1px solid #c4c4c4;
+  border-radius: 5px;
+  width: 100%;
+  padding: 1rem 0;
+}
+
+.btn-send:hover {
+  background-color: #c9c9c9;
+  color: #000;
+  cursor: pointer;
+  border: 1px solid #000;
+  border-radius: 5px;
+  width: 100%;
+  padding: 1rem 0;
+}
+
+.btn-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+}
+.upload-media {
+  margin: 0.5rem 0;
+}
+.button-media {
+  display: flex;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  background-color: lightgrey;
+}

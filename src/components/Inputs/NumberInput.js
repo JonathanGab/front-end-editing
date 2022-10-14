@@ -13,14 +13,16 @@ export default function NumberInput({
     <div className="input-container">
       <label className="input-label">{inputLabel}</label>
       <TextField
+        type={'number'}
         id="outlined-basic"
-        label={label}
         variant="outlined"
+        label={label}
         defaultValue={defaultValue}
         onChange={onChange}
         onClick={onClick}
         name={name}
-        type={'number'}
+        disabled={label === 'id' ? true : false}
+        fullWidth
       />
     </div>
   );

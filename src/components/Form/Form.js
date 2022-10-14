@@ -1,49 +1,34 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { wordpress_module } from '../../config';
 import { DrawerContext } from '../../Contexts/DrawerContext';
 import { JsonParserContext } from '../../Contexts/JsonParserContext';
-import NumberInput from '../Inputs/NumberInput';
-import TextInput from '../Inputs/TextInput';
-import SelectInput from '../Inputs/SelectInput';
-import { iterate } from 'dixea-json-parser';
+import GenericInputWordPress from '../Inputs/GenericInputWordPress';
+import Modal from '../modal/Modal';
 import './Form.css';
-export default function Form() {
-  //. STATE
-  const [apiResponse, setApiResponse] = useState([]);
-  const [tabInput, setTabInput] = useState([]);
+
+export default function Form({ lang }) {
+  //. ----------------------------------- STATE -----------------------------------
+
   const [drawerData, setDrawerData] = useState([]);
   const [parsedData, setParsedData] = useState([]);
-  //. CONTEXTS
+  // const [formValues, setFormValues] = useState(defaultValue);
+  const [isOpen, setIsOpen] = useState(false);
+  const [uploadId, setUploadId] = useState('');
+  const [mediaId, setMediaId] = useState('');
+  //.  ----------------------------------- CONTEXTS -----------------------------------
 
-  const { removeHtmlTags } = useContext(JsonParserContext);
-  const { open, id } = useContext(DrawerContext);
-  //. PARAMS
-  const { paramsId } = useParams();
-  //. FETCH DATA
-
-  useEffect(() => {
-    const getDataFromApi = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost/module/wp-json/wp/v2/maison/${paramsId}`
-        );
-        setApiResponse(response?.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    getDataFromApi();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { removeHtmlTags, iterate } = useContext(JsonParserContext);
+  const { open, id, setIsPreview, isPreview, formValues, setFormValues } =
+    useContext(DrawerContext);
+  //.  ----------------------------------- PARAMS -----------------------------------
 
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
       axios.patch(
-        `http://localhost/module/wp-json/wp/v2/maison/${paramsId}`,
-        tabInput,
+        `${wordpress_module.url_website_back}${id}`,
+        formValues,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -54,22 +39,25 @@ export default function Form() {
       );
     } catch (err) {
       console.error(err);
+    } finally {
+      setMediaId('');
+      setUploadId('');
     }
   };
-
+  //! ----------------------------------- fetchData -----------------------------------
   useEffect(() => {
     if (open === false && id === null) {
       setDrawerData([]);
     } else {
       axios
         // .get(`http://localhost/drupalSite/jsonapi/node/article/${id}`)
-        .get(`http://localhost/module/wp-json/wp/v2/${id}`)
+        .get(`${wordpress_module.url_website_back}${id}`)
         // .then((response) => setDrawerData(response.data.data))
         .then((response) => setDrawerData(response.data))
-        .catch((err) => console.log(err));
+        .catch((err) => console.error(err));
     }
   }, [open]);
-
+  //! ----------------------------------- displayData -----------------------------------
   useEffect(() => {
     if (drawerData !== null && drawerData !== undefined && id !== null) {
       iterate(drawerData, '', 'racine', parsedData, setParsedData);
@@ -78,8 +66,35 @@ export default function Form() {
     }
   }, [drawerData]);
 
+  const handleOpen = () => {
+    setIsOpen(!isOpen);
+    setFormValues({ ...formValues, featured_media: mediaId });
+  };
+
+  useEffect(() => {
+    if (uploadId) {
+      setMediaId(uploadId.id);
+      setFormValues({ ...formValues, featured_media: mediaId });
+    }
+    return;
+  }, [uploadId, mediaId]);
+  // ----------------------------------- CONSOLE.LOG -----------------------------------
+
+  // ----------------------------------- RETURN -----------------------------------
+  const handleInputsChange = (e, item) => {
+    setFormValues({
+      ...formValues,
+      [item.ancetre]:
+        item?.ancetre === wordpress_module.custom_fields
+          ? { ...formValues[item.ancetre], [item?.key]: e.target.value }
+          : e.target.value,
+      status: wordpress_module.draft,
+    });
+  };
+  console.log(formValues);
   return parsedData ? (
     <div className="form-container">
+      {lang}
       <form onSubmit={handleSubmit} className="form">
         {parsedData
           ?.filter(
@@ -87,69 +102,48 @@ export default function Form() {
               wordpress_module.filter.includes(element?.ancetre) &&
               wordpress_module.filter.includes(element?.key)
           )
-          ?.map((item, i) => (
-            <div key={i}>
-              {typeof item?.content === 'string' ? (
-                <div className="input-margin">
-                  <TextInput
-                    defaultValue={removeHtmlTags(item?.content)}
-                    label={item.key === 'rendered' ? item?.ancetre : item?.key}
-                    name={item?.ancetre}
-                    onChange={(e) => {
-                      setTabInput(
-                        item?.ancetre === 'acf'
-                          ? {
-                              ...tabInput,
-                              [item.ancetre]: { [item?.key]: e.target.value },
-                              status: 'darft',
-                            }
-                          : {
-                              ...tabInput,
-                              [item?.ancetre]: e.target.value,
-                              status: 'draft',
-                            }
-                      );
-                    }}
-                  />
-                </div>
-              ) : typeof item?.content === 'number' ? (
-                <div className="input-margin">
-                  <NumberInput
-                    defaultValue={removeHtmlTags(item?.content)}
-                    label={item.key === 'rendered' ? item?.ancetre : item?.key}
-                    name={item?.ancetre}
-                    onChange={(e) => {
-                      setTabInput(
-                        item?.ancetre === 'acf'
-                          ? {
-                              ...tabInput,
-                              [item.ancetre]: { [item?.key]: e.target.value },
-                              status: 'darft',
-                            }
-                          : {
-                              ...tabInput,
-                              [item?.ancetre]: e.target.value,
-                              status: 'draft',
-                            }
-                      );
-                    }}
-                  />
-                </div>
-              ) : typeof item?.content === 'boolean' ? (
-                <div className="input-margin">
-                  <SelectInput
-                    inputLabel={item?.key}
-                    label={item?.key}
-                    value={item?.content}
-                  />
-                </div>
-              ) : null}
-            </div>
+          ?.map((item, index) => (
+            <GenericInputWordPress
+              key={index}
+              type={item?.content}
+              itemAncetre={item?.ancetre}
+              itemParent={item?.parent}
+              itemKey={item?.key}
+              src={item?.content}
+              defaultValue={removeHtmlTags(item?.content)}
+              label={item.key === 'rendered' ? item?.ancetre : item?.key}
+              name={item?.ancetre}
+              onChange={(e) => {
+                handleInputsChange(e, item);
+              }}
+            />
           ))}
-        <div className="form-btn">
+        <div className="upload-media">
+          <button className="button-media" type="button" onClick={handleOpen}>
+            upload media
+          </button>
+        </div>
+        <div className="btn-container">
+          <button
+            className="btn-send"
+            type="button"
+            onClick={() => {
+              setIsPreview(!isPreview);
+            }}
+          >
+            Preview
+          </button>
           <button className="btn-send">send</button>
         </div>
       </form>
+      {/* <Modal
+        open={isOpen}
+        onClick={handleOpen}
+        uploadId={uploadId}
+        setUploadId={setUploadId}
+        mediaId={mediaId}
+        setMediaId={setMediaId}
+      /> */}
     </div>
   ) : (
     <div>Loading...</div>

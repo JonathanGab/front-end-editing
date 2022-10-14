@@ -8,19 +8,20 @@ export default function TextInput({
   onChange,
   name,
   onClick,
-  inputLabel,
 }) {
   return (
     <div className="input-container">
-      <label className="input-label">{inputLabel}</label>
       <TextField
         id="outlined-basic"
         label={label}
         variant="outlined"
         defaultValue={defaultValue}
         onChange={onChange}
-        onClick={onClick}
         name={name}
+        rows={defaultValue.length >= 37 ? 5 : 1}
+        multiline
+        fullWidth
+        disabled={label === 'id' ? true : false}
       />
     </div>
   );

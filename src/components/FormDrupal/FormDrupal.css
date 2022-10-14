@@ -1,0 +1,43 @@
+.form-drupal-container {
+  width: 100%;
+}
+.form-container {
+  width: 100%;
+  margin-bottom: 50px;
+}
+.form-drupal-btn {
+  width: 100%;
+  display: flex;
+}
+.btn-drupal-send {
+  width: 100%;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid;
+  border-radius: 5px;
+  border-color: lightgray;
+  color: #000;
+}
+.input-margin {
+  margin: 10px 0;
+}
+.upload-drupal-media {
+  margin: 0.5rem 0;
+}
+.button-drupal-media {
+  display: flex;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  background-color: lightgrey;
+}
+
+.btn-drupal-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 5px;
+}
+.btn-drupal-send:hover {
+  background-color: #000;
+  color: #fff;
+}

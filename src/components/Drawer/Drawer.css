@@ -18,45 +18,36 @@
   height: 100%;
   width: 100%;
 }
-.drawer {
+
+.drawer-close {
   position: absolute;
-  padding: 0;
-  width: 0;
-  right: 0;
   height: 100vh;
+  right: -20% !important;
+  padding: 0;
+  visibility: visible;
   background-color: #fff;
   transition: width 0.5s ease-out;
 }
-.drawer > div {
-  padding: 10px;
-}
-.drawer.close {
-  width: 0%;
-}
-.drawer.close * {
-  visibility: hidden;
-  transition: visibility 0.3s;
-}
-.drawer.open {
-  box-shadow: rgb(149 157 165 / 20%) 0px 8px 24px;
-  width: 70%;
+.drawer-open {
+  position: absolute;
+  right: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100vh;
+  padding: 0px 20px 0 20px;
   border-left: 1px solid rgb(238, 238, 238);
-  padding: 0px 30px 0 20px;
-}
-.drawer.open * {
+  background-color: #fff;
+  box-shadow: rgb(149 157 165 / 20%) 0px 8px 24px;
   visibility: visible;
+  transition: width 0.5s ease-out;
 }
-
 button {
   background: none;
   border: none;
   cursor: pointer;
 }
-
 .drawer-col {
   display: flex;
-  flex-direction: column;
   align-items: center;
   width: 100%;
-  padding: 0 20px;
 }

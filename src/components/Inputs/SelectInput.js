@@ -1,4 +1,5 @@
 import React from 'react';
+import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -12,22 +13,22 @@ export default function SelectInput({
   displayValue,
 }) {
   return (
-    <div className="select-input-container">
-      <div className="select-input-box">
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">{inputLabel}</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={value}
-            label={label}
-            onChange={onChange}
-          >
-            <MenuItem value="true">true</MenuItem>
-            <MenuItem value="false">false</MenuItem>
-          </Select>
-        </FormControl>
-      </div>
-    </div>
+    <Box className="select-input-container">
+      <FormControl style={{ width: '20%' }}>
+        <InputLabel id="demo-simple-select-label" className="input-label">
+          {inputLabel}
+        </InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={value}
+          label={label}
+          onChange={onChange}
+        >
+          <MenuItem value={true}>publish</MenuItem>
+          <MenuItem value={false}>draft</MenuItem>
+        </Select>
+      </FormControl>
+    </Box>
   );
 }
