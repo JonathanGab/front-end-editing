@@ -6,17 +6,21 @@ import { JsonParserContext } from '../Contexts/JsonParserContext';
 import { drupal_module } from '../config';
 import Drawer from '../components/package/Drawer';
 import DrupalForm from '../components/package/DrupalForm';
+// TODO : display traduction
+// TODO : cas limite, contenu différent / contenu sans image / sans texte
+
 export default function TestJS() {
   const [getData, setGetData] = useState([]);
   const [edit, setEdit] = useState({});
-  const [uploadId, setUploadId] = useState();
-  const [mediaId, setMediaId] = useState();
+  const [uploadId, setUploadId] = useState('');
+  const [mediaId, setMediaId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [array, setArray] = useState([]);
   const [filteredValue, setFilteredValue] = useState([]);
-  const [chemin, setChemin] = useState();
+  const [chemin, setChemin] = useState('');
   const [title, setTitle] = useState('');
   const [alt, setAlt] = useState('');
+  const [imageArray, setImageArray] = useState([]);
   const {
     setId,
     handleOpen,
@@ -28,6 +32,7 @@ export default function TestJS() {
     formMediaValues,
     CloseDrawer,
     setFormMediaValues,
+    navigation,
   } = useContext(DrawerContext);
   const { removeHtmlTags } = useContext(JsonParserContext);
 
@@ -75,9 +80,8 @@ export default function TestJS() {
       setUploadId('');
     }
   };
-
-  console.log('fmv', formMediaValues);
-  console.log(chemin);
+  console.log('image Array', imageArray);
+  console.log('array', array);
   if (isLoading) {
     return 'loading....';
   }
@@ -112,8 +116,14 @@ export default function TestJS() {
 
       <Drawer
         open={open}
-        onClick={CloseDrawer}
+        onClick={() => {
+          CloseDrawer();
+          setId(null);
+          setArray([]);
+          setImageArray([]);
+        }}
         width={drupal_module.style.drawer_width}
+        paperColor={drupal_module.style.paper_color}
         formOne={
           <DrupalForm
             emptyArray={array}
@@ -121,11 +131,10 @@ export default function TestJS() {
             setFormValues={setEdit}
             //. ---------------------------------
             onPatchData={handleSubmit}
+            ancetre={array.ancetre}
             chemin={chemin}
             setChemin={setChemin}
-            ancetre={array.ancetre}
             parent={array.parent}
-            getAncetre={chemin}
             //. ----------------------------------
             dataBeforeIterate={filteredValue}
             id={id}
@@ -135,29 +144,34 @@ export default function TestJS() {
 
             propsopen={open}
             setDataBeforeIterate={setFilteredValue}
-            drupal_module_url_back={`http://localhost/drupalSite/jsonapi/node/article/${id}?include=field_background,field_image`}
+            drupal_module_url_back={
+              navigation === ''
+                ? `http://localhost/drupalSite/jsonapi/node/article/${id}?include=field_background,field_image,field_image_3,field_image_4`
+                : `http://localhost/drupalSite/${navigation}/jsonapi/node/article/${id}?include=field_background,field_image,field_image_3,field_image_4`
+            }
             //. uploadImage() start
             //. displayData
 
             //. displayData end
             drupal_module_filter={drupal_module.filter}
-            drupal_module_exclude_id_array={drupal_module.exclude_id_array}
+            string_input_filter={drupal_module.string_input_filter}
             drupal_module_exclude_number_array={
               drupal_module.exclude_number_input
             }
             drupal_boolean_input={drupal_module.exclude_boolean_input}
-            drupal_image_field={drupal_module.include_image_field}
             onClickPreview={handlePreview}
             mediaId={mediaId}
             setMediaId={setMediaId}
             setUploadId={setUploadId}
             uploadId={uploadId}
             setFormMediaValues={setFormMediaValues}
-            field={array?.ancetre}
             setAlt={setAlt}
             setTitle={setTitle}
             title={title}
             alt={alt}
+            chemin_url={chemin}
+            navigation={navigation}
+            imageArray={imageArray}
           />
         }
       />

@@ -3,19 +3,19 @@ const splitChemin = (relation) => {
   return splitrelation[2];
 };
 let varImage = {};
+let relationshipsArray = [];
 let varImageIncluded = {};
 let includedArray = [];
-
 //! loop
-//
-export const iterateDrupal = async (
+let array = [];
+
+export const iterateCopy = (
   varJson,
-  varAncetre,
   varParent,
+  varAncetre,
   varChemin,
   responseArray,
-  setResponseArray,
-  varRelationshipsArray
+  setResponseArray
 ) => {
   for (let varKey in varJson) {
     let iterateObj = {
@@ -35,14 +35,13 @@ export const iterateDrupal = async (
       } else {
         varCheminNew = `${varChemin}>${varKey}`;
       }
-      iterateDrupal(
+      iterateCopy(
         varJson[varKey],
-        varAncetreNew,
         varKey,
+        varAncetreNew,
         varCheminNew,
         responseArray,
-        setResponseArray,
-        varRelationshipsArray
+        setResponseArray
       );
     } else if (
       // si la clé est un string/number/boolean, on l'ajoute à la réponse
@@ -56,9 +55,15 @@ export const iterateDrupal = async (
       iterateObj.parent = varParent;
       iterateObj.key = varKey;
       iterateObj.content = varJson[varKey];
+      // on remplit le tableau response avec les données
     }
-    // condition pour remplir le tableau d'images
-    // condition for fill images array
+    if (
+      iterateObj.parent !== null ||
+      iterateObj.key !== null ||
+      iterateObj.content !== null
+    ) {
+      array.push(iterateObj);
+    }
     if (
       iterateObj.ancetre === 'data' &&
       iterateObj.chemin.includes('data>relationships>field') &&
@@ -75,7 +80,7 @@ export const iterateDrupal = async (
     ) {
       varImage.image_id = iterateObj.content;
       varImage.image_url = '';
-      varRelationshipsArray.push({ ...varImage });
+      relationshipsArray.push({ ...varImage });
     }
     if (
       iterateObj.ancetre === 'included' &&
@@ -92,32 +97,10 @@ export const iterateDrupal = async (
       varImageIncluded.image_url = iterateObj.content;
       includedArray.push({ ...varImageIncluded });
     }
-
-    if (
-      iterateObj.parent !== null ||
-      iterateObj.key !== null ||
-      iterateObj.content !== null
-    )
-      if (responseArray.length === 0) {
-        //! -------------------------------------- FOR FILL THE ARRAY --------------------------------------
-        // si response est vide, on le remplit
-        // if responseArray is empty, we fill it
-        setResponseArray((prevState) => [...prevState, iterateObj]);
-      } else {
-        // si response n'est pas vide, on le vide d'abord et on le remplit
-        // if is not empty, we clear it and fill it
-        setResponseArray([]);
-        // Create async with setTimeout
-        setTimeout(() => {
-          setResponseArray((prevState) => [...prevState, iterateObj]);
-        }, 100);
-      }
-    // -------------------------------------------------------- END OF LOOP  -------------------------------------------------------
+    //. -------------------------------------------------------- END OF LOOP  -------------------------------------------------------
   }
-
-  // Ajoute l'image au tableau de relation
   // Add image url to relationships array
-  varRelationshipsArray.forEach((relation) => {
+  relationshipsArray.forEach((relation) => {
     includedArray.forEach((include) => {
       if (relation.image_id === include.id) {
         relation.image_url = include.image_url;
@@ -125,19 +108,13 @@ export const iterateDrupal = async (
     });
   });
 
-  // ajoute le tableau de relation au tableau de réponse
-  // add relationship array to at the end of response array
-  setResponseArray((prevState) => [
-    ...prevState,
-    // si l'element est déjà présent on le l'ajoute pas
-    // if the element is already present, we don't add it
-    ...varRelationshipsArray
+  console.log('relationshipsArray', relationshipsArray);
+  array.push(
+    ...relationshipsArray
       .filter(
-        (item) =>
-          !prevState.some((prevItem) => prevItem.ancetre === item.field_name)
+        (relation) =>
+          !array.some((item) => item.ancetre === relation.field_name)
       )
-      // on créer l'object avec le même format
-      // create new object with same structure
       .map((element) => {
         return {
           ancetre: element.field_name,
@@ -146,6 +123,8 @@ export const iterateDrupal = async (
           key: 'id',
           content: element.image_url,
         };
-      }),
-  ]);
+      })
+  );
+
+  return setResponseArray(array);
 };

@@ -5,11 +5,8 @@ import Upload from '../upload/Upload';
 import TextField from '@mui/material/TextField';
 
 export default function ModalDrupal(props) {
-  const [altText, setAltText] = useState('');
-  const [title, setTitle] = useState('');
   const [medias, setMedias] = useState([]);
   const [files, setFiles] = useState(null);
-
   useEffect(() => {
     axios
       .get('http://localhost/drupalSite/jsonapi/file/file')
@@ -22,7 +19,7 @@ export default function ModalDrupal(props) {
     e.preventDefault();
     try {
       const document = await axios.post(
-        'http://localhost/drupalSite/jsonapi/node/article/field_image',
+        'http://localhost/drupalSite/jsonapi/node/article/ ' + props.chemin_url,
         files,
         {
           headers: {

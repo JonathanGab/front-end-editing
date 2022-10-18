@@ -16,6 +16,9 @@ export default function ArticlePackageDrup() {
   const [isLoading, setIsLoading] = useState(false);
   const [array, setArray] = useState([]);
   const [filteredValue, setFilteredValue] = useState([]);
+  const [chemin, setChemin] = useState('');
+  const [imageArray, setImageArray] = useState([]);
+  const [navigation, setNavigation] = useState('');
   const {
     setId,
     handleOpen,
@@ -23,7 +26,6 @@ export default function ArticlePackageDrup() {
     getId,
     setGetId,
     isPreview,
-    formValues,
     open,
     handlePreview,
     setFormMediaValues,
@@ -47,8 +49,6 @@ export default function ArticlePackageDrup() {
         console.error(error);
       });
   }, []);
-
-  useEffect(() => {});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -79,6 +79,7 @@ export default function ArticlePackageDrup() {
     }
   };
 
+  console.log('nav', navigation);
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -109,32 +110,30 @@ export default function ArticlePackageDrup() {
                 handleOpen();
               }}
             />
-            {/* component */}
-            {/* <ButtonEdit
-              onClick={() => {
-                setId(item.id);
-                setGetId(item.id);
-                handleOpen();
-              }}
-            />*/}
           </div>
         </>
       ))}
-      {/* <Drawer formOne={<FormDrupal />} width={50 + '%'} /> */}
-
       <Drawer
         open={open}
-        closeModalOnClick={CloseDrawer}
+        closeModalOnClick={() => {
+          CloseDrawer();
+          setId(null);
+          setArray([]);
+          setImageArray([]);
+        }}
         width={drupal_module.style.drawer_width}
+        language_array={drupal_module.language_array}
+        setNavigation={setNavigation}
         formOne={
           <DrupalForm
             emptyArray={array}
             editFormValues={edit}
             setEditFormValues={setEdit}
-            langague={'fr'}
             //. ---------------------------------
             onPatchData={handleSubmit}
             ancetre={array.ancetre}
+            chemin={chemin}
+            setChemin={setChemin}
             parent={array.parent}
             //. iterate function() start
             dataBeforeIterateFunc={filteredValue}
@@ -147,12 +146,15 @@ export default function ArticlePackageDrup() {
             setDataBeforeIterateFunc={setFilteredValue}
             //. uploadImage() start
             //. displayData end
-            drupal_module_url_back={`http://localhost/drupalSite/jsonapi/node/article/${id}?include=field_image`}
+            drupal_module_url_back={
+              navigation === ''
+                ? `http://localhost/drupalSite/jsonapi/node/article/${id}?include=field_background,field_image,field_image_3,field_image_4`
+                : `http://localhost/drupalSite/${navigation}/jsonapi/node/article/${id}?include=field_background,field_image,field_image_3,field_image_4`
+            }
             drupal_module_filter={drupal_module.filter}
             drupal_string_input={drupal_module.exclude_id_array}
             drupal_number_input={drupal_module.exclude_number_input}
             drupal_boolean_input={drupal_module.exclude_boolean_input}
-            drupal_image_field={drupal_module.include_image_field}
             //. props for modal
             media_url={'http://localhost/drupalSite/jsonapi/file/file'}
             api_url={drupal_module.url_website_back}
@@ -162,6 +164,9 @@ export default function ArticlePackageDrup() {
             dragAndDropUploadId={uploadId}
             setEditFormMedia={setFormMediaValues}
             onClickIsPreview={handlePreview}
+            chemin_url={chemin}
+            image_array={imageArray}
+            navigation={navigation}
           />
         }
       />

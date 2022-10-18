@@ -6024,10 +6024,10 @@ jest@^27.4.3:
     import-local "^3.0.2"
     jest-cli "^27.5.1"
 
-jonathan-formulaire@^1.0.22:
-  version "1.0.22"
-  resolved "https://registry.yarnpkg.com/jonathan-formulaire/-/jonathan-formulaire-1.0.22.tgz#2c982d9c0681896b50b61780fbe245cbe3ccd7d1"
-  integrity sha512-+i3fyhdjSQp125B8U4KG6YDFkz8WS+/vcG5D2BwOfEaD4Jjif387OuQOWaTyO12hoImP+EOOwfh5K26iLuj1pQ==
+jonathan-formulaire@^1.0.45:
+  version "1.0.45"
+  resolved "https://registry.yarnpkg.com/jonathan-formulaire/-/jonathan-formulaire-1.0.45.tgz#b5dad35038d1c5957dd718bc5d19a34f7db8c1e0"
+  integrity sha512-QhLTNMsDT9bkYPjRLTj8Z8As3N8GuYwvn41mfG2fpwVlJ5Ura2h6IB+aRKEbeh8LZWJDEAdQ1BW7v3gP0c5cFw==
   dependencies:
     "@emotion/react" "^11.10.4"
     "@emotion/styled" "^11.10.4"

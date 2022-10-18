@@ -10,7 +10,8 @@ export default function DrawerContextProvider({ children }) {
   const [isPreview, setIsPreview] = useState(false);
   const [formValues, setFormValues] = useState({});
   const [formMediaValues, setFormMediaValues] = useState({});
-
+  const [array, setArray] = useState([]);
+  const [navigation, setNavigation] = useState('');
   const handleClose = () => {
     setOpen(false);
     setGetId(null);
@@ -30,6 +31,8 @@ export default function DrawerContextProvider({ children }) {
   return (
     <DrawerContext.Provider
       value={{
+        array,
+        setArray,
         handleClose,
         open,
         setOpen,
@@ -48,6 +51,8 @@ export default function DrawerContextProvider({ children }) {
         CloseDrawer,
         formMediaValues,
         setFormMediaValues,
+        navigation,
+        setNavigation,
       }}
     >
       {children}

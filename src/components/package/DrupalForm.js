@@ -5,16 +5,11 @@ import { removeHtmlTags } from '../package/features/removeHtmlTag';
 import { uploadImageDrupal } from '../package/features/uploadImageDrupal';
 import './Form.css';
 import GenericInput from '../package/inputs/generic/GenericInputDrupal';
-
 import ModalDrupal from './modal/ModalDrupal';
+
 export default function DrupalForm(props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [title, setTitle] = useState('');
-  const [alt, setAlt] = useState('');
-  const splitChemin = (item) => {
-    let splitItem = item.split('>');
-    return splitItem[2];
-  };
+
   useEffect(() => {
     fetchData(
       props.propsopen,
@@ -22,18 +17,21 @@ export default function DrupalForm(props) {
       props.setDataBeforeIterate,
       props.drupal_module_url_back
     );
-  }, [props.propsopen]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.propsopen, props.id, props.navigation]);
 
   useEffect(() => {
     displayDataDrupal(
       props.dataBeforeIterate,
       props.id,
       props.dataAfterIterate,
-      props.seDataAfterIterate
+      props.seDataAfterIterate,
+      props.imageArray
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.dataBeforeIterate]);
 
-  const handleOpen = (item) => {
+  const handleOpen = () => {
     setIsOpen(!isOpen);
     props.setFormMediaValues({
       [props.chemin]: {
@@ -59,7 +57,8 @@ export default function DrupalForm(props) {
       props.alt,
       props.title
     );
-  }, [props.uploadId?.id, props.mediaId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.uploadId.id, props.mediaId]);
 
   const handleInputsChange = (e, item) => {
     props.setFormValues(
@@ -76,21 +75,27 @@ export default function DrupalForm(props) {
           }
     );
   };
+  const changeIndex = (arr) => {
+    const sortArray = arr.sort((a, b) =>
+      a.ancetre > b.ancetre ? 1 : b.ancetre > a.ancetre ? -1 : 0
+    );
+    return sortArray;
+  };
 
   return props.emptyArray ? (
     <form onSubmit={props.onPatchData} className="form-cms">
-      {props.emptyArray
+      {changeIndex(props.emptyArray)
         ?.filter(
           (element) =>
-            props.drupal_module_filter.includes(element?.ancetre) &&
-            props.drupal_module_filter.includes(element?.key)
+            (props.drupal_module_filter.includes(element?.ancetre) &&
+              props.drupal_module_filter.includes(element?.key)) ||
+            element?.ancetre.includes('field_')
         )
         ?.map((item, index) => (
           <GenericInput
             key={index}
             type={item?.content}
             itemAncetre={item?.ancetre}
-            itemChemin={splitChemin(item?.chemin)}
             itemParent={item?.parent}
             itemKey={item?.key}
             rows={
@@ -106,7 +111,7 @@ export default function DrupalForm(props) {
             onChange={(e) => handleInputsChange(e, item)}
             value={item?.content}
             // passe un props pour la recuperer dans le parent
-            drupal_string_input={props.drupal_module_exclude_id_array}
+            drupal_string_input={props.string_input_filter}
             drupal_number_input={props.drupal_module_exclude_number_array}
             drupal_boolean_input={props.drupal_boolean_input}
             drupal_image_field={props.drupal_image_field}
@@ -114,7 +119,7 @@ export default function DrupalForm(props) {
               setIsOpen(!isOpen);
               props.setChemin(item?.ancetre);
             }}
-            console={() => console.log('console', item?.ancetre)}
+            textClick={() => console.log('textClick', item.key)}
           />
         ))}
 
@@ -130,6 +135,8 @@ export default function DrupalForm(props) {
       </div>
       <ModalDrupal
         open={isOpen}
+        route_to_media
+        api_url
         onClick={handleOpen}
         setUploadId={props.setUploadId}
         mediaId={props.mediaId}
@@ -138,6 +145,7 @@ export default function DrupalForm(props) {
         setTitle={props.setTitle}
         title={props.title}
         alt={props.alt}
+        chemin_url={props.chemin_url}
       />
     </form>
   ) : (

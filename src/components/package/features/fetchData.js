@@ -1,12 +1,16 @@
 import axios from 'axios';
 
-export const fetchData = (open, id, setDrawerData, url) => {
+export const fetchData = async (open, id, setDrawerData, url) => {
   if (open === false && id === null) {
     setDrawerData([]);
+    return;
   } else {
-    axios
-      .get(url)
-      .then((response) => setDrawerData(response.data))
-      .catch((err) => console.error(err));
+    try {
+      const res = await axios.get(url);
+      setDrawerData(res.data);
+    } catch (err) {
+      setDrawerData([]);
+    }
   }
+  return;
 };

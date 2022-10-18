@@ -7,20 +7,19 @@ import Image from '../Image';
 export default function GenericInput({
   type,
   itemAncetre,
-  itemChemin,
   itemGrandParent,
   itemParent,
   itemKey,
   drupal_string_input,
   drupal_number_input,
   drupal_boolean_input,
-  drupal_image_field,
   ...props
 }) {
   switch (true) {
     case typeof type === 'string' &&
       itemAncetre !== 'included' &&
-      !drupal_string_input.includes(itemKey): {
+      drupal_string_input.includes(itemKey) &&
+      itemParent !== 'meta': {
       return <TextInput {...props} />;
     }
     case typeof type === 'number' &&
@@ -31,12 +30,10 @@ export default function GenericInput({
       drupal_boolean_input.includes(itemGrandParent): {
       return <SelectInput {...props} />;
     }
-    case itemAncetre !== 'included' &&
-      drupal_image_field.includes(itemAncetre): {
+    case itemAncetre.includes('field_'): {
       return <Image {...props} />;
     }
     default: {
-      // return <Image {...props} />;
       return <></>;
     }
   }

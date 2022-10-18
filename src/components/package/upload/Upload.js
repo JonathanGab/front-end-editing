@@ -60,7 +60,7 @@ export default function Upload(props) {
   };
 
   return (
-    <div>
+    <div className="upload-file-container">
       <div id="form-file-upload" onDragEnter={handleDrag}>
         <input
           ref={inputRef}

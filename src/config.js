@@ -29,6 +29,9 @@ module.exports = {
     draft: 'publish',
   },
   drupal_module: {
+    // precisez le nom de votre cms
+    cms: 'drupal',
+    // url de votre api drupal ne rien préciser après le node/
     url_website_back: 'http://localhost/drupalSite/jsonapi/node/',
     //. entrez l'ancetre et la key de votre objet
     // afin de pouvoir afficher les champs correspondants
@@ -42,33 +45,21 @@ module.exports = {
       'value',
       'included',
       'url',
-      'field_image',
-      'field_background',
     ],
-    exclude_id_array: [
-      'langcode',
-      'type',
-      'id',
-      'content_translation_source',
-      'summary',
-      'revision_timestamp',
-      'created',
-      'changed',
-      'format',
-      'processed',
-      'filename',
-      'filemime',
-      'data',
-    ],
+    string_input_filter: ['title', 'value'],
     exclude_number_input: ['body', 'attributes'],
     exclude_boolean_input: ['uri'],
-    include_image_field: ['field_image', 'field_background'],
-    // precisez le nom de votre cms
-    cms: 'drupal',
+    // publier les articles ou les stocker en brouillon
     draft: false,
     style: {
+      // largeur du drawer
       drawer_width: '50%',
+      // couleur de l'arrière plan du drawer
+      paper_color: 'rgba(223, 223, 223, 0.562)',
     },
+    // chemin vers l'url qui stock les images
     media_url: 'http://localhost/drupalSite/jsonapi/file/file',
+    // les langages disponibles doivent être activer dans drupal
+    language_array: ['fr', 'en', 'es'],
   },
 };

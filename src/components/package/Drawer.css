@@ -40,6 +40,33 @@
   overflow-y: auto;
   overflow-x: hidden;
 }
+
+.drawer-nav-container {
+  display: flex;
+  width: 100%;
+}
+.drawer-navigation {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+.drawer-nav-list {
+  display: flex;
+  flex-direction: row;
+  list-style: none;
+}
+li:nth-child(1) {
+  border-left: 1px solid lightgray;
+}
+li {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid lightgray;
+  border-right: 1px solid lightgray;
+  cursor: pointer;
+}
+li:hover {
+  background-color: #f5f5f5;
+}
 button {
   background: none;
   border: none;
