@@ -9,8 +9,8 @@ export const fetchData = async (open, id, setDrawerData, url) => {
       const res = await axios.get(url);
       setDrawerData(res.data);
     } catch (err) {
+      console.error(err);
       setDrawerData([]);
     }
   }
-  return;
 };

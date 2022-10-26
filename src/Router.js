@@ -9,10 +9,12 @@ import ArticlePackage from './Pages/ArticlePackage';
 import ArticlePackageDrup from './Pages/ArticlePackageDrup';
 
 import TestJS from './Pages/TestJS';
+import LoginForm from './components/package/login/LoginForm';
 export default function Router() {
   return (
     <Routes>
       <Route path="/" element={<ArticlesWP />} />
+      <Route path="/login" element={<LoginForm />} />
       <Route path="/package" element={<ArticlePackage />} />
       <Route path="/drupal-npm" element={<ArticlePackageDrup />} />
       <Route path="/drupal" element={<TestJS />} />

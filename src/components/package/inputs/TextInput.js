@@ -8,14 +8,16 @@ export default function TextInput(props) {
       <TextField
         type="text"
         // input props
+        name={props.nameTextInput}
         label={props.label}
         defaultValue={props.defaultValue}
-        onChange={props.onChange}
+        onChange={props.onChangeTextInput}
+        onClick={props.textClick}
         // for style of input
         rows={props.rows}
         multiline={true}
         disabled={props.label === 'id' ? true : false}
-        onClick={props.textClick}
+        error={props.error === null ? true : false}
       />
     </div>
   );

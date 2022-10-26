@@ -3063,6 +3063,11 @@ batch@0.6.1:
   resolved "https://registry.yarnpkg.com/batch/-/batch-0.6.1.tgz#dc34314f4e679318093fc760272525f94bf25c16"
   integrity sha512-x+VAiMRL6UPkx+kudNvxTl6hB2XNNCG2r+7wixVfIYwu/2HKRXimwQyaumLjMveWvT2Hkd/cAJw+QBMfJ/EKVw==
 
+bcryptjs@^2.4.3:
+  version "2.4.3"
+  resolved "https://registry.yarnpkg.com/bcryptjs/-/bcryptjs-2.4.3.tgz#9ab5627b93e60621ff7cdac5da9733027df1d0cb"
+  integrity sha512-V/Hy/X9Vt7f3BbPJEi8BdVFMByHi+jNXrYkW3huaybV/kQ0KJg0Y6PkEMbn+zeT+i+SiKZ/HMqJGIIt4LZDqNQ==
+
 bfj@^7.0.2:
   version "7.0.2"
   resolved "https://registry.yarnpkg.com/bfj/-/bfj-7.0.2.tgz#1988ce76f3add9ac2913fd8ba47aad9e651bfbb2"
@@ -6024,10 +6029,10 @@ jest@^27.4.3:
     import-local "^3.0.2"
     jest-cli "^27.5.1"
 
-jonathan-formulaire@^1.0.45:
-  version "1.0.45"
-  resolved "https://registry.yarnpkg.com/jonathan-formulaire/-/jonathan-formulaire-1.0.45.tgz#b5dad35038d1c5957dd718bc5d19a34f7db8c1e0"
-  integrity sha512-QhLTNMsDT9bkYPjRLTj8Z8As3N8GuYwvn41mfG2fpwVlJ5Ura2h6IB+aRKEbeh8LZWJDEAdQ1BW7v3gP0c5cFw==
+jonathan-formulaire@^1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/jonathan-formulaire/-/jonathan-formulaire-1.1.6.tgz#44f26edfc25b785aad3108db42bfb27f68fa1433"
+  integrity sha512-tN1TRdxvC4UFT0JongOi94mc7w47TuB2yGga7UhhVUa51uzB+eH2l4yZmXYeJeFqgppbIYYTUBxe9BNthNstGw==
   dependencies:
     "@emotion/react" "^11.10.4"
     "@emotion/styled" "^11.10.4"

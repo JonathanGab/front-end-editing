@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { displayDataDrupal } from '../package/features/displayData';
 import { fetchData } from '../package/features/fetchData';
 import { removeHtmlTags } from '../package/features/removeHtmlTag';
@@ -6,19 +6,35 @@ import { uploadImageDrupal } from '../package/features/uploadImageDrupal';
 import './Form.css';
 import GenericInput from '../package/inputs/generic/GenericInputDrupal';
 import ModalDrupal from './modal/ModalDrupal';
+import axios from 'axios';
 
+// ERROR: (FORMAT ERROR) PUSHER une image dans la médiathèque / tri des images par mot clé
+// TODO : si la trad n'est pas active
+// TODO : detecter les problèmes de paramètres de configuration (auth/trad)
+// TODO : créer un article a la connexion et stocker l'id et le supprimer lorsqu'on se déconnecte
+// DONE : renvoyer le champ vide avec un border rouge
 export default function DrupalForm(props) {
   const [isOpen, setIsOpen] = useState(false);
+  const [storeId, setStoreId] = useState('');
+  const [getRoute, setGetRoute] = useState(null);
+  const [getImage, setGetImage] = useState('');
+  const [storageArray, setStorageArray] = useState([]);
+  const [chemin, setChemin] = useState('');
+  const [uploadId, setUploadId] = useState('');
+  const [mediaId, setMediaId] = useState('');
+  const [formValues, setFormValues] = useState({});
+  const [editFormMedia, setEditFormMedia] = useState({});
 
+  //? --------------------------- USE EFFECT ---------------------------
   useEffect(() => {
     fetchData(
-      props.propsopen,
+      isOpen,
       props.id,
       props.setDataBeforeIterate,
       props.drupal_module_url_back
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.propsopen, props.id, props.navigation]);
+  }, [isOpen, props.id, props.navigation]);
 
   useEffect(() => {
     displayDataDrupal(
@@ -31,97 +47,195 @@ export default function DrupalForm(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.dataBeforeIterate]);
 
-  const handleOpen = () => {
-    setIsOpen(!isOpen);
-    props.setFormMediaValues({
-      [props.chemin]: {
-        ...props.formMediaValues,
+  useEffect(() => {
+    uploadImageDrupal(chemin, uploadId, setMediaId, setEditFormMedia, mediaId);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uploadId, mediaId]);
+
+  useEffect(() => {
+    if (getImage !== '') {
+      updateArrayImage(getRoute, getImage);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getImage]);
+  // --------------------------------------------------------
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    try {
+      axios.patch(
+        props.navigation === ''
+          ? `${props.drupal_base_url}/jsonapi/node/article/${props.id}`
+          : `${props.drupal_base_url}/${props.navigation}/jsonapi/node/article/${props.id}`,
+        {
+          data: {
+            type: 'node--article',
+            id: props.id,
+            attributes: formValues,
+            relationships: editFormMedia,
+          },
+        },
+        {
+          headers: {
+            Authorization:
+              'Basic ' + window.btoa(`${props.user}:${props.user_mdp}`),
+            Accept: 'application/vnd.api+json',
+            'Content-Type': 'application/vnd.api+json',
+          },
+        }
+      );
+    } catch (err) {
+      console.error({ message: err });
+    } finally {
+      setMediaId('');
+      setUploadId('');
+    }
+  };
+
+  //? --------------------------- EDIT DATA ---------------------------
+
+  const handleImageChange = (e) => {
+    setEditFormMedia({
+      ...editFormMedia,
+      [chemin]: {
         data: {
           type: 'file--file',
-          id: props.mediaId,
+          id: mediaId || storeId,
           meta: {
-            alt: props.alt,
-            title: props.title,
+            alt: e?.target?.value,
+            title: e?.target?.value,
           },
         },
       },
     });
   };
 
-  useEffect(() => {
-    uploadImageDrupal(
-      props.uploadId,
-      props.setMediaId,
-      props.setFormMediaValues,
-      props.mediaId,
-      props.alt,
-      props.title
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.uploadId.id, props.mediaId]);
-
   const handleInputsChange = (e, item) => {
-    props.setFormValues(
+    setFormValues(
       item?.parent === 'attributes'
         ? {
-            ...props.formValues,
-            ...props.formValues[item?.ancetre],
+            ...formValues,
+            ...formValues[item?.ancetre],
             [item?.key]: e.target.value,
           }
         : {
-            ...props.formValues,
-            ...props.formValues[item?.ancetre],
+            ...formValues,
+            ...formValues[item?.ancetre],
             [item?.parent]: e.target.value,
           }
     );
   };
+  // ---------------------------  ---------------------------
   const changeIndex = (arr) => {
     const sortArray = arr.sort((a, b) =>
       a.ancetre > b.ancetre ? 1 : b.ancetre > a.ancetre ? -1 : 0
     );
     return sortArray;
   };
+  //? --------------------------- UPDATE ARRAY IMAGE ---------------------------
+  const displayOnEdit = (array, itemAncetre, itemContent) => {
+    let result = array.find((obj) => obj.route === itemAncetre);
+
+    return result?.url
+      ? `http://localhost${result?.url}`
+      : `http://localhost${itemContent}`;
+  };
+
+  // ------------------------- NEW FEATURE -------------------------
+
+  const updateArrayImage = (route, image) => {
+    let temporaryObj = {
+      route,
+      ...image.attributes.uri,
+    };
+    // if storage.route is equal to route remplace object
+    if (storageArray.find((obj) => obj.route === route)) {
+      return setStorageArray(
+        storageArray.map((obj) => (obj.route === route ? temporaryObj : obj))
+      );
+    } else {
+      //  else add object
+      return setStorageArray((prevState) => [...prevState, temporaryObj]);
+    }
+  };
+  const checkLanguage = (emptyArray) => {
+    if (emptyArray === props.navigation) {
+      return;
+    } else if (props.navigation === '') {
+      emptyArray = 'fr';
+      return;
+    } else {
+      return "Veuillez verifier la configuration de la langue dans votre back office Drupal. La langue à été activée sur le site mais pas sur l'article";
+    }
+  };
+  // ----------------------- CONSOLE LOG -----------------------
+  // console.log(formValues);
+  // -----------------------------------------------------------
 
   return props.emptyArray ? (
-    <form onSubmit={props.onPatchData} className="form-cms">
-      {changeIndex(props.emptyArray)
-        ?.filter(
-          (element) =>
-            (props.drupal_module_filter.includes(element?.ancetre) &&
-              props.drupal_module_filter.includes(element?.key)) ||
-            element?.ancetre.includes('field_')
-        )
-        ?.map((item, index) => (
-          <GenericInput
-            key={index}
-            type={item?.content}
-            itemAncetre={item?.ancetre}
-            itemParent={item?.parent}
-            itemKey={item?.key}
-            rows={
-              typeof item?.content === 'string' && item?.content.length > 37
-                ? 5
-                : 1
-            }
-            inputLabel={item?.key}
-            src={`http://localhost${item?.content}`}
-            label={item?.key}
-            defaultValue={removeHtmlTags(item?.content)}
-            name={item?.ancetre}
-            onChange={(e) => handleInputsChange(e, item)}
-            value={item?.content}
-            // passe un props pour la recuperer dans le parent
-            drupal_string_input={props.string_input_filter}
-            drupal_number_input={props.drupal_module_exclude_number_array}
-            drupal_boolean_input={props.drupal_boolean_input}
-            drupal_image_field={props.drupal_image_field}
-            updateImageOnclick={() => {
-              setIsOpen(!isOpen);
-              props.setChemin(item?.ancetre);
-            }}
-            textClick={() => console.log('textClick', item.key)}
-          />
-        ))}
+    <form onSubmit={(e) => handleSubmit(e)} className="form-cms">
+      {/* display the validation message */}
+      <div className="error_message">
+        {props.emptyArray[5]?.key === 'langcode' &&
+          checkLanguage(props.emptyArray[5]?.content)}
+      </div>
+      {/* //? ---------------------------------- GENERIQUE INPUT ---------------------------------- */}
+      {changeIndex(props.emptyArray).map((item, index) => (
+        <GenericInput
+          key={index}
+          type={item?.content}
+          itemAncetre={item?.ancetre}
+          itemParent={item?.parent}
+          itemIsImage={item?.isImage}
+          itemKey={item?.key}
+          textClick={() => console.log(typeof item?.content)}
+          error={item?.content}
+          //. --------------------------------------- INPUT TEXT COMPONENT ---------------------------------------
+          rows={
+            typeof item?.content === 'string' && item?.content.length > 37
+              ? 5
+              : 1
+          }
+          inputLabel={item?.key}
+          defaultValue={removeHtmlTags(item?.content)}
+          onChangeTextInput={(e) => {
+            handleInputsChange(e, item);
+          }}
+          value={item?.content}
+          //. --------------------------------------- FILTER CONFIG ---------------------------------------
+          drupal_string_input={props.string_input_filter}
+          drupal_number_input={props.drupal_module_exclude_number_array}
+          drupal_boolean_input={props.drupal_boolean_input}
+          //. --------------------------------------- IMAGE COMPONENT ---------------------------------------
+
+          src={
+            //! ADD TS
+            displayOnEdit(storageArray, item.ancetre, item?.content)
+          }
+          label={
+            item?.parent === 'attributes'
+              ? item?.key
+              : `${item?.parent} - ${item?.key}`
+          }
+          altDefaultValue={item?.alt}
+          //! EDIT ON TS
+          imagePosition={`image ${item?.ancetre}`}
+          updateImageOnclick={() => {
+            setIsOpen(!isOpen);
+            setGetRoute(item?.ancetre);
+            setChemin(item?.ancetre);
+          }}
+          //! ADD TS FOR IMAGE
+          onClickImageInput={() => {
+            setChemin(item?.ancetre);
+            setStoreId(item?.parent);
+          }}
+          onChangeImageInput={(e) => {
+            handleImageChange(e);
+          }}
+        />
+      ))}
 
       <div className="btn-container">
         <button
@@ -133,19 +247,25 @@ export default function DrupalForm(props) {
         </button>
         <button className="btn-send">send</button>
       </div>
+      {/* //? ---------------------------------- MODAL DRUPAL ---------------------------------- */}
       <ModalDrupal
         open={isOpen}
         route_to_media
         api_url
-        onClick={handleOpen}
-        setUploadId={props.setUploadId}
-        mediaId={props.mediaId}
-        setMediaId={props.setMediaId}
-        setAlt={props.setAlt}
-        setTitle={props.setTitle}
-        title={props.title}
-        alt={props.alt}
-        chemin_url={props.chemin_url}
+        onClose={() => {
+          setIsOpen(false);
+          setGetRoute(null);
+        }}
+        onClick={(e) => {
+          handleImageChange(e);
+          setIsOpen(!isOpen);
+        }}
+        setUploadId={setUploadId}
+        mediaId={mediaId}
+        setMediaId={setMediaId}
+        chemin_url={chemin}
+        setGetImage={setGetImage}
+        getImage={getImage}
       />
     </form>
   ) : (

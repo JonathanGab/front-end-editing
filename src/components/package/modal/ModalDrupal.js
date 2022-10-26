@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Modal.css';
 import Upload from '../upload/Upload';
-import TextField from '@mui/material/TextField';
 
 export default function ModalDrupal(props) {
   const [medias, setMedias] = useState([]);
   const [files, setFiles] = useState(null);
+  const [searchValue, setSearchValue] = useState('');
+
   useEffect(() => {
     axios
       .get('http://localhost/drupalSite/jsonapi/file/file')
@@ -19,7 +20,8 @@ export default function ModalDrupal(props) {
     e.preventDefault();
     try {
       const document = await axios.post(
-        'http://localhost/drupalSite/jsonapi/node/article/ ' + props.chemin_url,
+        `http://localhost/drupalSite/jsonapi/node/article/${props.chemin_url}`,
+        // `http://localhost/drupalSite/jsonapi/media/image/field_media_image`,
         files,
         {
           headers: {
@@ -41,7 +43,7 @@ export default function ModalDrupal(props) {
       <div className="modal">
         <div className="mod_padding">
           <div className="close_btn">
-            <div className="mod_close_btn" onClick={props.onClick}>
+            <div className="mod_close_btn" onClick={props.onClose}>
               x
             </div>
           </div>
@@ -50,30 +52,38 @@ export default function ModalDrupal(props) {
               <h1>Sélectionnez un média</h1>
             </div>
             <div className="mod_filter_search">
-              <button>Filtre</button> <input type="text" />
+              <button>Filtre</button>{' '}
+              <input
+                type="text"
+                onChange={(e) => setSearchValue(e.target.value)}
+              />
             </div>
           </div>
           <div className="mod_wrapper">
             <div className="mod_direction">
               <div className="mod_grid">
                 {medias?.map((varItem) => (
-                  <div
-                    className="mod_box"
-                    key={varItem.id}
-                    onClick={() => console.log()}
-                  >
+                  <div className="mod_box" key={varItem.id}>
                     <img
                       src={`http://localhost${varItem?.attributes?.uri?.url}`}
                       alt=""
                       className="mod_img"
-                      onClick={() => props.setMediaId(varItem.id)}
+                      onClick={() => {
+                        //! ADD TS
+                        props.setMediaId(varItem.id);
+                        props.setGetImage(varItem);
+                      }}
                     />
                   </div>
                 ))}
               </div>
             </div>
             <div className="mod_btn_send">
-              <button onClick={props.onClick} className="btn_send">
+              <button
+                onClick={props.onClick}
+                type="button"
+                className="btn_send"
+              >
                 Valider
               </button>
             </div>
@@ -85,24 +95,6 @@ export default function ModalDrupal(props) {
               <div className="mod_upload_block">
                 <div className="mod_upload_left">
                   <Upload files={files} setFiles={setFiles} />
-                </div>
-                <div className="mod_upload_right">
-                  <div className="mod_update_input">
-                    <TextField
-                      id="outlined-name"
-                      label="alt"
-                      value={props.altText}
-                      onChange={(e) => props.setAltText(e.target.value)}
-                    />
-                  </div>
-                  <div className="mod_update_input">
-                    <TextField
-                      id="outlined-name"
-                      label="legend"
-                      onChange={(e) => props.setTitle(e.target.value)}
-                      value={props.title}
-                    />
-                  </div>
                 </div>
               </div>
               <div className="mod_btn_send">

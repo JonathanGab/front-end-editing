@@ -29,37 +29,39 @@ module.exports = {
     draft: 'publish',
   },
   drupal_module: {
+    website_base_url: 'http://localhost/drupalSite',
     // precisez le nom de votre cms
     cms: 'drupal',
     // url de votre api drupal ne rien préciser après le node/
     url_website_back: 'http://localhost/drupalSite/jsonapi/node/',
     //. entrez l'ancetre et la key de votre objet
     // afin de pouvoir afficher les champs correspondants
-    filter: [
-      'id',
-      'data',
-      'attributes',
+
+    string_input_filter: [
       'title',
-      'status',
-      'body',
       'value',
-      'included',
-      'url',
+      'body',
+      'field_brand',
+      'field_article_uuid',
     ],
-    string_input_filter: ['title', 'value'],
-    exclude_number_input: ['body', 'attributes'],
+    exclude_number_input: ['body', 'attributes', 'comment'],
     exclude_boolean_input: ['uri'],
     // publier les articles ou les stocker en brouillon
     draft: false,
     style: {
       // largeur du drawer
-      drawer_width: '50%',
+      drawer_width_desktop: '50%',
+      drawer_width_mobile: '100%',
       // couleur de l'arrière plan du drawer
       paper_color: 'rgba(223, 223, 223, 0.562)',
+      drawer_header_background: '#daf0ee',
     },
     // chemin vers l'url qui stock les images
     media_url: 'http://localhost/drupalSite/jsonapi/file/file',
     // les langages disponibles doivent être activer dans drupal
     language_array: ['fr', 'en', 'es'],
+    drawer_title: 'Module front end',
+    user: 'dx_admin',
+    user_mdp: 'Vavaskale69!',
   },
 };

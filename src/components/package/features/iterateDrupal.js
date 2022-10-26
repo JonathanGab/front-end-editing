@@ -1,3 +1,5 @@
+import { iterate } from './iterate';
+
 const splitChemin = (relation) => {
   let splitrelation = relation.split('>');
   return splitrelation[2];
@@ -48,7 +50,8 @@ export const iterateDrupal = async (
       // si la clé est un string/number/boolean, on l'ajoute à la réponse
       typeof varJson[varKey] === 'string' ||
       typeof varJson[varKey] === 'number' ||
-      typeof varJson[varKey] === 'boolean'
+      typeof varJson[varKey] === 'boolean' ||
+      varJson[varKey] === null
     ) {
       // create object with type
       iterateObj.ancetre = varAncetre;
@@ -66,37 +69,43 @@ export const iterateDrupal = async (
     ) {
       //. -------------------------------------------------------------------------------------------------------------------------
       varImage.field_name = splitChemin(iterateObj.chemin);
-    }
-    if (
+    } else if (
       iterateObj.ancetre === 'data' &&
       //! attention le nom du champs système d'une image dans drupal doit commencer par field
       iterateObj.chemin.includes('data>relationships>field') &&
       iterateObj.key === 'id'
     ) {
       varImage.image_id = iterateObj.content;
-      varImage.image_url = '';
+    } else if (iterateObj.key === 'alt') {
+      varImage.alt = iterateObj.content;
+    } else if (iterateObj.key === 'title' && iterateObj.parent === 'meta') {
+      varImage.title = iterateObj.content;
       varRelationshipsArray.push({ ...varImage });
-    }
-    if (
-      iterateObj.ancetre === 'included' &&
-      iterateObj.key === 'id' &&
-      iterateObj.parent !== 'data'
-    ) {
-      varImageIncluded.id = iterateObj.content;
-    }
-    if (
+    } else if (
       iterateObj.ancetre === 'included' &&
       iterateObj.parent === 'uri' &&
       iterateObj.key === 'url'
     ) {
       varImageIncluded.image_url = iterateObj.content;
+    } else if (
+      iterateObj.ancetre === 'included' &&
+      iterateObj.key === 'id' &&
+      iterateObj.parent !== 'data'
+    ) {
+      varImageIncluded.id = iterateObj.content;
+    } else if (
+      iterateObj.key === 'filemime' &&
+      iterateObj.content.includes('image/')
+    ) {
+      varImageIncluded.isImage = true;
       includedArray.push({ ...varImageIncluded });
     }
 
     if (
       iterateObj.parent !== null ||
-      iterateObj.key !== null ||
-      iterateObj.content !== null
+      iterateObj.key !== null
+      //   // ||
+      //   // iterateObj.content !== null
     )
       if (responseArray.length === 0) {
         //! -------------------------------------- FOR FILL THE ARRAY --------------------------------------
@@ -121,6 +130,7 @@ export const iterateDrupal = async (
     includedArray.forEach((include) => {
       if (relation.image_id === include.id) {
         relation.image_url = include.image_url;
+        relation.isImage = include.isImage;
       }
     });
   });
@@ -143,7 +153,10 @@ export const iterateDrupal = async (
           ancetre: element.field_name,
           chemin: element.field_name,
           parent: element.image_id,
+          isImage: element.isImage,
           key: 'id',
+          alt: element.alt,
+          title: element.title,
           content: element.image_url,
         };
       }),

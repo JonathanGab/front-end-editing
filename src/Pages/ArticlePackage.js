@@ -58,7 +58,7 @@ export default function ArticlePackage() {
     };
     fetchData();
   }, []);
-  console.log(edit);
+  // console.log(edit);
   return isLoading ? (
     <div>
       <h1>Loading...</h1>

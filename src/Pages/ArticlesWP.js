@@ -84,7 +84,7 @@ export default function ArticlesWP() {
   //   }
   // };
   //-------------------------------- CONSOLE.LOG --------------------------------
-  console.log('fv', formValues);
+
   return isLoading ? (
     <div>
       <h1>Loading...</h1>

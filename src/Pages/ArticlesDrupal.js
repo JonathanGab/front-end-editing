@@ -37,11 +37,7 @@ export default function ArticlesDrupal() {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get(
-        // `http://localhost/drupalSite/jsonapi/node/article`
-        `http://localhost/drupalSite/jsonapi/node/article
-        `
-      )
+      .get(`http://localhost/drupalSite/jsonapi/node/article`)
       .then((response) => {
         setGetData(response?.data?.data);
         setIsLoading(false);
@@ -51,8 +47,8 @@ export default function ArticlesDrupal() {
       });
   }, []);
   // ------------------------------------------- CONSOLE LOG -------------------------------------------
-  console.log('getData', getData);
-  console.log(formValues);
+  // console.log('getData', getData);
+  // console.log(formValues);
   if (isLoading) {
     return <div>Loading...</div>;
   }

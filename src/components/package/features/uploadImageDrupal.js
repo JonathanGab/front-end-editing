@@ -1,21 +1,20 @@
 export const uploadImageDrupal = (
+  chemin_url,
   uploadId,
   setMediaId,
-  setFormMediaValues,
-  mediaId,
-  alt,
-  title
+  setEditFormMedia,
+  mediaId
 ) => {
   if (uploadId) {
     setMediaId(uploadId.id);
-    setFormMediaValues({
-      field_image: {
+    setEditFormMedia({
+      [chemin_url]: {
         data: {
           type: 'file--file',
           id: mediaId,
           meta: {
-            alt: alt,
-            title: title,
+            alt: '',
+            title: '',
           },
         },
       },

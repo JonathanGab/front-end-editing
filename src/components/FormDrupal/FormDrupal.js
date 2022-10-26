@@ -132,8 +132,7 @@ export default function FormDrupal() {
     }
   };
   // ----------------------------------- CONSOLE.LOG -----------------------------------
-  console.log(formValues);
-  console.log(parsedData);
+
   // -------
 
   return parsedData ? (

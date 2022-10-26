@@ -10,27 +10,29 @@ export default function GenericInput({
   itemGrandParent,
   itemParent,
   itemKey,
+  itemIsImage,
   drupal_string_input,
   drupal_number_input,
   drupal_boolean_input,
   ...props
 }) {
   switch (true) {
-    case typeof type === 'string' &&
+    case (typeof type === 'string' || type === null) &&
       itemAncetre !== 'included' &&
       drupal_string_input.includes(itemKey) &&
       itemParent !== 'meta': {
       return <TextInput {...props} />;
     }
     case typeof type === 'number' &&
-      !drupal_number_input.includes(itemParent): {
+      !drupal_number_input.includes(itemParent) &&
+      itemKey === 'meta': {
       return <NumberInput {...props} />;
     }
     case typeof type === 'boolean' &&
       drupal_boolean_input.includes(itemGrandParent): {
       return <SelectInput {...props} />;
     }
-    case itemAncetre.includes('field_'): {
+    case itemIsImage: {
       return <Image {...props} />;
     }
     default: {
